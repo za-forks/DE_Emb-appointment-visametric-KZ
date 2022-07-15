@@ -4,54 +4,58 @@ from beepy import beep
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.keys import Keys
+#from webdriver_manager.chrome import ChromeDriverManager
+#from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-def check_alert_message(alert):
-    if alert == "هیچ تاریخ قابل دسترسی موجود نمی باشد .":
-        return False
-    else:
+def check_earliest_date(earliest_date):
+    if earliest_date < '2022-08-25':
         return True
+    else:
+        return False
 
 
-def reserve_meeting():
-    service = Service(executable_path=ChromeDriverManager().install())
+def reserve_appointment():
+    PATH = r"C:\Program Files (x86)\chromedriver.exe"
+    # service = Service(executable_path=ChromeDriverManager().install())
+    service = Service(executable_path=PATH)
     driver = webdriver.Chrome(service=service)
-    alert_error = True
+    no_earlier_dates = True
     
-    while alert_error:
+    while no_earlier_dates:
         print("=" * 50)
-        LOGIN_PAGE = "https://ir-appointment.visametric.com/ir"
+        LOGIN_PAGE = "https://appointment.visametric.com/"
         driver.get(LOGIN_PAGE)
         time.sleep(5)
         print(f"Open {LOGIN_PAGE} in chrome")
-        driver.find_element(By.NAME, "nationalBtn").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]']//option[@value='KZ']").click()
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object]']//option[@value='DE']").click()
+        time.sleep(1)
+        driver.find_element(By.XPATH, "//button[@class='btn btn-lg btn-primary pull-right']").click()
+        #driver.find_element(By.LINK_TEXT, "Continue").click()
         time.sleep(5)
-        driver.find_element(By.ID, "result1").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object]']//option[@value='2']").click()
         time.sleep(1)
-        driver.find_element(By.ID, "result3").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object]']//option[@value='normal']").click()
         time.sleep(1)
-        driver.find_element(By.ID, "btnSubmit").click()
-        time.sleep(5)
-        driver.find_element(By.XPATH, "//select[@name='city']//option[@value='3']").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]']//option[@value='04']").click()
         time.sleep(1)
-        driver.find_element(By.XPATH, "//select[@name='office']//option[@value='1']").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object],[object Object]']//option[@value='2']").click()
         time.sleep(1)
-        driver.find_element(By.XPATH, "//select[@name='officetype']//option[@value='1']").click()
+        driver.find_element(By.XPATH, "//select[@values='[object Object],[object Object],[object Object]']//option[@value='individual']").click()
         time.sleep(1)
-        driver.find_element(By.XPATH, "//select[@name='totalPerson']//option[@value='1']").click()
-        time.sleep(1)
-        alert = driver.find_element(By.ID, "availableDayInfo").text
-        if check_alert_message(alert):
-            print("find free time")
-            alert_error = False
+        earliest_date = driver.find_element(By.XPATH, "//li[@class='list-group-item']").text
+        if check_earliest_date(earliest_date):
+            print("earlier date found!")
+            no_earlier_dates = False
     
-    return check_alert_message(alert)
+    return check_earliest_date(earliest_date)
 
 
 if __name__ == "__main__":
-    reserve_meeting()
+    reserve_appointment()
     for i in range(1000):
         beep(sound = "siren")
         time.sleep(0.1)
+        
